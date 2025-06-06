@@ -13,6 +13,7 @@ const Part = ({name, value}) => {
 }
 
 const Content = ({parts}) => {
+  console.log(parts)
   const stats = parts.map(part => <Part key={part.name} name={part.name} value={part.value} />)
   return (
     <table>
@@ -41,13 +42,14 @@ const App = () => {
       <Button onClick={() => handleClick(neutral, setNeutral)} text='Neutral' />
       <Button onClick={() => handleClick(bad, setBad)} text='Bad' />
       <Header text={'Statistics'}/>
-      <Content parts={[{good: good}, {neutral: neutral}, {bad: bad}]} />
-      {
-      /*
-      <p>Total: {good + neutral + bad}</p>
+      <Content parts={[
+        { name: 'Good', value: good },
+        { name: 'Neutral', value: neutral },
+        { name: 'Bad', value: bad }
+      ]} />
+      {/*<p>Total: {good + neutral + bad}</p>
       <p>Average: {(good - bad) / (good + neutral + bad)}</p>
-      <p>Positive: {(good / (good + neutral + bad)) * 100} %</p>*/
-      }
+      <p>Positive: {(good / (good + neutral + bad)) * 100} %</p>*/}
     </div>
   )
 }
