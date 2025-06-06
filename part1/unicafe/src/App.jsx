@@ -3,7 +3,7 @@ import './App.css'
 
 const Header = ({text}) => <h1>{text}</h1>
 
-const Part = ({name, value}) => {
+const StatsLine = ({name, value}) => {
   return (
     <tr>
       <td>{name}</td>
@@ -12,13 +12,30 @@ const Part = ({name, value}) => {
   )
 }
 
-const Content = ({parts}) => {
-  console.log(parts)
-  const stats = parts.map(part => <Part key={part.name} name={part.name} value={part.value} />)
+const Statistics = ({feeds}) => {
+  let average = 0
+  let positive = 0
+  const sum = feeds.reduce((acc, feed) => acc + feed.value, 0)
+  const stats = feeds.map(feed => <StatsLine key={feed.name} name={feed.name} value={feed.value} />)
+  if (sum === 0) {
+    return (
+      <div>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+  const good = feeds.find(feed => feed.name.toLowerCase() === 'good')?.value || 0
+  const neutral = feeds.find(feed => feed.name.toLowerCase() === 'neutral')?.value || 0
+  const bad = feeds.find(feed => feed.name.toLowerCase() === 'bad')?.value || 0
+  average = (good - bad) / (good + neutral + bad)
+  positive = (good / (good + neutral + bad)) * 100
   return (
     <table>
       <tbody>
         {stats}
+        <StatsLine name={'Total: '} value={sum} />
+        <StatsLine name={'Average: '} value={average.toFixed(2)} />
+        <StatsLine name={'Positive: '} value={`${positive.toFixed(2)} %`} />
       </tbody>
     </table>
   )
@@ -42,14 +59,11 @@ const App = () => {
       <Button onClick={() => handleClick(neutral, setNeutral)} text='Neutral' />
       <Button onClick={() => handleClick(bad, setBad)} text='Bad' />
       <Header text={'Statistics'}/>
-      <Content parts={[
+      <Statistics feeds={[
         { name: 'Good', value: good },
         { name: 'Neutral', value: neutral },
         { name: 'Bad', value: bad }
       ]} />
-      {/*<p>Total: {good + neutral + bad}</p>
-      <p>Average: {(good - bad) / (good + neutral + bad)}</p>
-      <p>Positive: {(good / (good + neutral + bad)) * 100} %</p>*/}
     </div>
   )
 }
