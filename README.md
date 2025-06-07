@@ -7,3 +7,5 @@ La aplicación existe solo para demostrar algunos conceptos básicos del desarro
 - [part1](./part1)
     - [courseinfo](./part1/courseinfo)
     - [unicafe](./part1/unicafe)
+    - [anecdotes](./part1/anecdotes)
+- [part2](./part2)
