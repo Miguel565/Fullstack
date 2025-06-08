@@ -4,7 +4,7 @@ import './App.css'
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const App = () => {
-  const [selected, setSelected] = useState(0)
+
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -16,15 +16,27 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
+  const max = anecdotes.length
+  const [selected, setSelected] = useState(0) 
+  const [votes, setVotes] = useState(Array(max).fill(0))
+
   const handleNextAnecdote = () => {
     const randomIndex = Math.floor(Math.random() * anecdotes.length)
     setSelected(randomIndex)
+  }
+
+  const handleVote = () => {
+    const newVotes = [...votes]
+    newVotes[selected] += 1
+    setVotes(newVotes)
   }
 
   return (
     <div>
       {anecdotes[selected]}
       <br />
+      <p>has {votes[selected]} votes</p>
+      <Button onClick={handleVote} text="Vote" />
       <Button onClick={handleNextAnecdote} text="Next Anecdote" />
     </div>
   )
