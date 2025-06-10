@@ -42,13 +42,13 @@ const App = () => {
       <Header text="Anecdote of the day" />
       <Content text={anecdotes[selected]} />
       <br />
-      <Content text={'has ${votes[selected]} votes'} />
+      <Content text={`has ${votes[selected]} votes`} />
       <Button onClick={handleVote} text="Vote" />
       <Button onClick={handleNextAnecdote} text="Next Anecdote" />
       <br />
       <Header text="Anecdote with most votes" />
       <Content text={anecdotes[mostVotedIndex]} />
-      <Content text={'has ${votes[mostVotedIndex]} votes'} />
+      <Content text={`has ${votes[mostVotedIndex]} votes`} />
     </div>
   )
 }

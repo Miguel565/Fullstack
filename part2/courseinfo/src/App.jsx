@@ -1,5 +1,3 @@
-import './App.css'
-
 const Header = ({ text }) => <h1>{text}</h1>
 
 const Part = ({ name, exercises }) => {
@@ -14,9 +12,11 @@ const Content = ({ parts }) => {
   return (
     <div>
       <ul>
-        {parts.map(part => (
-          <Part key={part.id} name={part.name} exercises={part.exercises} />
-        ))}
+        {
+          parts.map(part => (
+            <Part key={part.id} name={part.name} exercises={part.exercises} />
+          ))
+        }
       </ul>
     </div>
   )
