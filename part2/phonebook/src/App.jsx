@@ -1,25 +1,26 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import Axios from 'axios'
 import "./App.css";
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "4345343456553", id: 1 },
-    { name: "Ada Lovelace", number: "1234567890", id: 2 },
-    { name: "Dan Abramov", number: "0987654321", id: 3 },
-    { name: "Mary Poppins", number: "555-1234", id: 4 },
-    { name: "John Doe", number: "111-2222", id: 5 },
-    { name: "Jane Smith", number: "333-4444", id: 6 },
-    { name: "Alice Johnson", number: "777-8888", id: 7 },
-    { name: "Bob Brown", number: "999-0000", id: 8 },
-    { name: "Charlie White", number: "222-3333", id: 9 },
-  ]);
-
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    Axios.get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
   const AddPerson = (event) => {
     event.preventDefault();
