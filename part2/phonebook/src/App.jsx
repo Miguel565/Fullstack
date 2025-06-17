@@ -60,6 +60,23 @@ const App = () => {
     }
   };
 
+  const handleDelete = (event) => {
+    event.preventDefault();
+    const id = parseInt(event.target.id.value, 10);
+    const personToDelete = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personServices.deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+          alert(`Deleted ${personToDelete.name}`);
+        })
+        .catch(error => {
+          console.error("Error deleting person:", error);
+          alert("Failed to delete person. Please try again.");
+        });
+    }
+  };
+
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
@@ -84,7 +101,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <ul>
-        <Persons persons={filteredPersons} />
+        <Persons persons={filteredPersons} onSubmit={handleDelete} />
       </ul>
     </div>
   );

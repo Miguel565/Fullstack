@@ -29,4 +29,13 @@ const update = (id, updatedPerson) => {
         });
 }
 
-export default { getAll, create, update };
+const deletePerson = (id) => {
+    return Axios.delete(`${baseUrl}/${id}`)
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Error deleting person:", error);
+            throw error;
+        });
+}
+
+export default { getAll, create, update, deletePerson };
