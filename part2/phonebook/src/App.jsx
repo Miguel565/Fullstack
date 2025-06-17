@@ -29,7 +29,7 @@ const App = () => {
 
     if (persons.some((person) => person.name === newName && person.number === newNumber)) {
       alert(`${newName} is already added to phonebook`);
-    } else if (persons.some((person) => person.name === newName)) {
+    } else if (persons.some((person) => person.name === newName)) {  // Phonebook step 10, start
       const existingPerson = persons.find((person) => person.name === newName);
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         personServices.update(existingPerson.id, { ...existingPerson, number: newNumber })
@@ -43,7 +43,7 @@ const App = () => {
             console.error("Error updating person:", error);
             alert("Failed to update person. Please try again.");
           });
-      }
+      }  // Phonebook step 10, end
     } else{
       setPersons(persons.concat(personObject));
       personServices.create(personObject)
