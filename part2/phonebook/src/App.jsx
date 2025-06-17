@@ -34,6 +34,13 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     } else {
       setPersons(persons.concat(personObject));
+      Axios.post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data));
+        })
+        .catch(error => {
+          console.error("Error adding person:", error);
+        });
       setNewName("");
       setNewNumber("");
     }
