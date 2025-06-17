@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import Axios from 'axios'
+import { useState, useEffect } from "react";
+import personServices from "./services/persons";
 import "./App.css";
 import Filter from './components/Filter'
 import Persons from './components/Persons'
@@ -13,13 +12,11 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    Axios.get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching data:", error);
-      });
+    personServices.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    }).catch(error => {
+      console.error("Error fetching persons:", error);
+    });
   }, []);
 
   const AddPerson = (event) => {
@@ -30,17 +27,34 @@ const App = () => {
       number: newNumber,
     };
 
-    if (persons.some((person) => person.name === newName)) {
+    if (persons.some((person) => person.name === newName && person.number === newNumber)) {
       alert(`${newName} is already added to phonebook`);
-    } else {
+    } else if (persons.some((person) => person.name === newName)) {
+      const existingPerson = persons.find((person) => person.name === newName);
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personServices.update(existingPerson.id, { ...existingPerson, number: newNumber })
+          .then((returnedPerson) => {
+            setPersons(persons.map((person) => (person.id !== existingPerson.id ? person : returnedPerson)));
+            alert(`Updated ${newName}`);
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch(error => {
+            console.error("Error updating person:", error);
+            alert("Failed to update person. Please try again.");
+          });
+      }
+    } else{
       setPersons(persons.concat(personObject));
-      Axios.post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data));
+      personServices.create(personObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
         })
         .catch(error => {
           console.error("Error adding person:", error);
+          alert("Failed to add person. Please try again.");
         });
+      alert(`Added ${newName}`);
       setNewName("");
       setNewNumber("");
     }
