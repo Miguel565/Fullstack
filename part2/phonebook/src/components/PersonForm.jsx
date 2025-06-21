@@ -4,6 +4,7 @@ const PersonForm = ({ onSubmit, newName, setNewName, newNumber, setNewNumber }) 
       <div>
         Name: 
         <input
+          type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Enter name"
@@ -11,7 +12,8 @@ const PersonForm = ({ onSubmit, newName, setNewName, newNumber, setNewNumber }) 
       </div>
       <div>
         Number: 
-        <input
+        <input 
+          type="number"
           value={newNumber}
           onChange={(e) => setNewNumber(e.target.value)}
           placeholder="Enter number"

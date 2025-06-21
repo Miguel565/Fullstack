@@ -1,23 +1,35 @@
 import { useState, useEffect } from "react";
-import personServices from "./services/persons";
+import contactServices from "./services/contacts";
 import "./App.css";
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    personServices.getAll().then((initialPersons) => {
+    contactServices.getAll().then((initialPersons) => {
       setPersons(initialPersons);
     }).catch(error => {
+      if(message !== null){
+        clearTimeout(message.timeout);
+      }
+      setMessage({
+        type: 'error',
+        text: 'Error fetching persons. Please try again later.',
+        timeout: setTimeout(() => {
+          setMessage(null);
+        }, 5000)
+      });
       console.error("Error fetching persons:", error);
     });
-  }, []);
+  }, [message]);
 
   const AddPerson = (event) => {
     event.preventDefault();
@@ -28,36 +40,73 @@ const App = () => {
     };
 
     if (persons.some((person) => person.name === newName && person.number === newNumber)) {
-      alert(`${newName} is already added to phonebook`);
+      setMessage({
+        type: 'error',
+        text: `${newName} is already added to phonebook`,
+        timeout: setTimeout(() => {
+          setMessage(null);
+        }, 5000)
+      });
+    } else if(persons.some((person) => person.number === newNumber)) {
+      const existingPerson = persons.find((person) => person.number === newNumber);
+      setMessage({
+        type: 'error',
+        text: `This number: ${newNumber}, belong to ${existingPerson.name}. Please check the number and try again.`,
+        timeout: setTimeout(() => {
+          setMessage(null);
+        }, 5000)
+      });
     } else if (persons.some((person) => person.name === newName)) {  // Phonebook step 10, start
       const existingPerson = persons.find((person) => person.name === newName);
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        personServices.update(existingPerson.id, { ...existingPerson, number: newNumber })
+        contactServices.update(existingPerson.id, { ...existingPerson, number: newNumber })
           .then((returnedPerson) => {
             setPersons(persons.map((person) => (person.id !== existingPerson.id ? person : returnedPerson)));
-            alert(`Updated ${newName}`);
-            setNewName("");
-            setNewNumber("");
           })
           .catch(error => {
             console.error("Error updating person:", error);
-            alert("Failed to update person. Please try again.");
+            setMessage({
+              type: 'error',
+              text: `Failed to update ${newName}. Please try again.`,
+              timeout: setTimeout(() => {
+                setMessage(null);
+              }, 5000)
+            });
           });
+        setMessage({
+          type: 'success',
+          text: `${newName} updated successful.`,
+          timeout: setTimeout(() => {
+            setMessage(null);
+          }, 5000)
+        });
       }  // Phonebook step 10, end
     } else{
       setPersons(persons.concat(personObject));
-      personServices.create(personObject)
+      contactServices.create(personObject)
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
         })
         .catch(error => {
           console.error("Error adding person:", error);
-          alert("Failed to add person. Please try again.");
+          setMessage({
+            type: 'error',
+            text: `Failed to add ${newName}. Please try again.`,
+            timeout: setTimeout(() => {
+              setMessage(null);
+            }, 5000)
+          });
         });
-      alert(`Added ${newName}`);
-      setNewName("");
-      setNewNumber("");
+      setMessage({
+        type: 'success',
+        text: `Added ${newName} to phonebook.`,
+        timeout: setTimeout(() => {
+          setMessage(null);
+        }, 5000)
+      });
     }
+    setNewName('')
+    setNewNumber('')
   };
 
   const handleDelete = (event) => {
@@ -65,14 +114,26 @@ const App = () => {
     const id = parseInt(event.target.id.value, 10);
     const personToDelete = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
-      personServices.deletePerson(id)
+      contactServices.deletePerson(id)
         .then(() => {
           setPersons(persons.filter((person) => person.id !== id));
-          alert(`Deleted ${personToDelete.name}`);
         })
         .catch(error => {
           console.error("Error deleting person:", error);
-          alert("Failed to delete person. Please try again.");
+          setMessage({
+            type: 'error',
+            text: `Failed to delete ${personToDelete.name}. Please try again.`,
+            timeout: setTimeout(() => {
+              setMessage(null);
+            }, 5000)
+          });
+        });
+        setMessage({
+          type: 'success',
+          text: `Deleted ${personToDelete.name} from phonebook.`,
+          timeout: setTimeout(() => {
+            setMessage(null);
+          }, 5000)
         });
     }
   };
@@ -90,6 +151,7 @@ const App = () => {
       <header className="App-header">
         <h1>Phonebook</h1>
       </header>
+      <Notification message={message} />
       <Filter text={filter} onChange={handleFilterChange} />
       <h2>Add a new person</h2>
       <PersonForm
