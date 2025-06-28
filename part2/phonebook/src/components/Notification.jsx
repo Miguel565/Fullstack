@@ -3,7 +3,9 @@ const Notification = ({ message }) => {
         color: 'green',
         background: 'lightgrey'
     }
-    if(message.type === 'error') {
+    if(message === null) {
+        return null;
+    }else if(message.type === 'error') {
         textStyle.color = 'red';
         textStyle.background = 'lightpink';
     }

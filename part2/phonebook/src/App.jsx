@@ -17,9 +17,6 @@ const App = () => {
     contactServices.getAll().then((initialPersons) => {
       setPersons(initialPersons);
     }).catch(error => {
-      if(message !== null){
-        clearTimeout(message.timeout);
-      }
       setMessage({
         type: 'error',
         text: 'Error fetching persons. Please try again later.',
