@@ -3,7 +3,7 @@ const Persons = ({ persons, onSubmit }) => {
     persons.map((person) => 
       <li key={person.id}>
         {person.name}: {person.number} 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={() => onSubmit(person.id)}>
           <button type="submit">Delete</button>
         </form>
       </li>

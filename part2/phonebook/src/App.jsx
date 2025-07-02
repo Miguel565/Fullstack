@@ -106,10 +106,10 @@ const App = () => {
     setNewNumber('')
   };
 
-  const handleDelete = (event) => {
-    event.preventDefault();
-    const id = parseInt(event.target.id.value, 10);
+  const handleDelete = (id) => {
+    console.log('Delete id: ', id)
     const personToDelete = persons.find((person) => person.id === id);
+    console.log('Delete name: ', personToDelete.name)
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
       contactServices.deletePerson(id)
         .then(() => {

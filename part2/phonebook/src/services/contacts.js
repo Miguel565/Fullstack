@@ -6,8 +6,8 @@ const getAll = () => {
     return Axios.get(baseUrl)
         .then(response => response.data)
         .catch(error => {
-        console.error("Error fetching persons:", error);
-        throw error;
+            console.error("Error fetching persons:", error);
+            throw error;
         });
 }
 
@@ -15,8 +15,8 @@ const create = (newPerson) => {
     return Axios.post(baseUrl, newPerson)
         .then(response => response.data)
         .catch(error => {
-        console.error("Error creating person:", error);
-        throw error;
+            console.error("Error creating person:", error);
+            throw error;
         });
 }
 
@@ -24,8 +24,8 @@ const update = (id, updatedPerson) => {  // Phonebook Step 10
     return Axios.put(`${baseUrl}/${id}`, updatedPerson)
         .then(response => response.data)
         .catch(error => {
-        console.error("Error updating person:", error);
-        throw error;
+            console.error("Error updating person:", error);
+            throw error;
         });
 }
 
