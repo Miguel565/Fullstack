@@ -59,6 +59,13 @@ const App = () => {
         contactServices.update(existingPerson.id, { ...existingPerson, number: newNumber })
           .then((returnedPerson) => {
             setPersons(persons.map((person) => (person.id !== existingPerson.id ? person : returnedPerson)));
+            setMessage({
+              type: 'success',
+              text: `${newName} updated successful.`,
+              timeout: setTimeout(() => {
+                setMessage(null);
+              }, 5000)
+            });
           })
           .catch(error => {
             console.error("Error updating person:", error);
@@ -70,19 +77,19 @@ const App = () => {
               }, 5000)
             });
           });
-        setMessage({
-          type: 'success',
-          text: `${newName} updated successful.`,
-          timeout: setTimeout(() => {
-            setMessage(null);
-          }, 5000)
-        });
       }  // Phonebook step 10, end
     } else{
       setPersons(persons.concat(personObject));
       contactServices.create(personObject)
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
+          setMessage({
+            type: 'success',
+            text: `Added ${newName} to phonebook.`,
+            timeout: setTimeout(() => {
+              setMessage(null);
+            }, 5000)
+          });
         })
         .catch(error => {
           console.error("Error adding person:", error);
@@ -94,37 +101,14 @@ const App = () => {
             }, 5000)
           });
         });
-      setMessage({
-        type: 'success',
-        text: `Added ${newName} to phonebook.`,
-        timeout: setTimeout(() => {
-          setMessage(null);
-        }, 5000)
-      });
-    }
     setNewName('')
     setNewNumber('')
   };
 
   const handleDelete = (id) => {
-    console.log('Delete id: ', id)
-    const personToDelete = persons.find((person) => person.id === id);
-    console.log('Delete name: ', personToDelete.name)
-    if (window.confirm(`Delete ${personToDelete.name}?`)) {
-      contactServices.deletePerson(id)
-        .then(() => {
-          setPersons(persons.filter((person) => person.id !== id));
-        })
-        .catch(error => {
-          console.error("Error deleting person:", error);
-          setMessage({
-            type: 'error',
-            text: `Failed to delete ${personToDelete.name}. Please try again.`,
-            timeout: setTimeout(() => {
-              setMessage(null);
-            }, 5000)
-          });
-        });
+    contactServices.deletePerson(id)
+      .then((response) => {
+        setPersons(persons.filter((person) => person.id !== id));
         setMessage({
           type: 'success',
           text: `Deleted ${personToDelete.name} from phonebook.`,
@@ -132,7 +116,17 @@ const App = () => {
             setMessage(null);
           }, 5000)
         });
-    }
+      })
+      .catch(error => {
+        console.error("Error deleting person:", error);
+        setMessage({
+          type: 'error',
+          text: `Failed to delete ${personToDelete.name}. Please try again.`,
+          timeout: setTimeout(() => {
+            setMessage(null);
+          }, 5000)
+        });
+      });
   };
 
   const handleFilterChange = (event) => {
@@ -140,7 +134,7 @@ const App = () => {
   };
 
   const filteredPersons = persons.filter((person) =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
+    person.name?.toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
@@ -160,7 +154,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <ul>
-        <Persons persons={filteredPersons} onSubmit={handleDelete} />
+        <Persons persons={filteredPersons} onDelete={handleDelete} />
       </ul>
     </div>
   );
