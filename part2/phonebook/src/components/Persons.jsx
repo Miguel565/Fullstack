@@ -1,25 +1,22 @@
-const Person = ({ person, onDelete}) => {
-  const handleDelete = (data) => {
-    if(window.confirm(`Do you really want to delete ${data.name}?`)) {
-      onDelete(data.id)
-    }
-  }
+const Person = ({ person, onDelete }) => {
   return (
-      <li key={person.id}>
-        {person.name}: {person.number}
-        <form onSubmit={() => handleDete(person)}>
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-    )
+    <div>
+      {person.name}: {person.number}
+      <form onSubmit={() => onDelete(person.id)}>
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+  );
 }
 
 const Persons = ({ persons, onDelete }) => {
-  return (<>
-    {persons.map((person) => {
-      <Person key={person.id} person={person} onDelete={onDelete} />
-    })}
-  </>);
+  return (
+    <div>
+      {persons.map((person) => {
+        return <Person key={person.id} person={person} onDelete={onDelete} />;
+      })}
+    </div>
+  );
 }
 
 export default Persons

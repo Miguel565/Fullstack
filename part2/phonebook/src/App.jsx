@@ -34,7 +34,7 @@ const App = () => {
       id: persons.length + 1, // Simple ID generation
       name: newName,
       number: newNumber,
-    };
+    }
 
     if (persons.some((person) => person.name === newName && person.number === newNumber)) {
       setMessage({
@@ -44,7 +44,7 @@ const App = () => {
           setMessage(null);
         }, 5000)
       });
-    } else if(persons.some((person) => person.number === newNumber)) {
+    } else if (persons.some((person) => person.number === newNumber)) {
       const existingPerson = persons.find((person) => person.number === newNumber);
       setMessage({
         type: 'error',
@@ -78,7 +78,7 @@ const App = () => {
             });
           });
       }  // Phonebook step 10, end
-    } else{
+    } else {
       setPersons(persons.concat(personObject));
       contactServices.create(personObject)
         .then((returnedPerson) => {
@@ -101,33 +101,37 @@ const App = () => {
             }, 5000)
           });
         });
-    setNewName('')
-    setNewNumber('')
-  };
+      setNewName('')
+      setNewNumber('')
+    }
+  }
 
   const handleDelete = (id) => {
-    contactServices.deletePerson(id)
-      .then((response) => {
-        setPersons(persons.filter((person) => person.id !== id));
-        setMessage({
-          type: 'success',
-          text: `Deleted ${personToDelete.name} from phonebook.`,
-          timeout: setTimeout(() => {
-            setMessage(null);
-          }, 5000)
+    const personToDelete = persons.find((person) => person.id === id);
+    if (window.confirm(`Do you really want to delete ${personToDelete.name}?`)) {
+      contactServices.deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+          setMessage({
+            type: 'success',
+            text: `Deleted ${personToDelete.name} from phonebook.`,
+            timeout: setTimeout(() => {
+              setMessage(null);
+            }, 5000)
+          });
+        })
+        .catch(error => {
+          console.error("Error deleting person:", error);
+          setMessage({
+            type: 'error',
+            text: `Failed to delete ${personToDelete.name}. Please try again.`,
+            timeout: setTimeout(() => {
+              setMessage(null);
+            }, 5000)
+          });
         });
-      })
-      .catch(error => {
-        console.error("Error deleting person:", error);
-        setMessage({
-          type: 'error',
-          text: `Failed to delete ${personToDelete.name}. Please try again.`,
-          timeout: setTimeout(() => {
-            setMessage(null);
-          }, 5000)
-        });
-      });
-  };
+    }
+  }
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -153,11 +157,9 @@ const App = () => {
         setNewNumber={setNewNumber}
       />
       <h2>Numbers</h2>
-      <ul>
-        <Persons persons={filteredPersons} onDelete={handleDelete} />
-      </ul>
+      <Persons persons={filteredPersons} onDelete={handleDelete} />
     </div>
   );
-};
+}
 
 export default App;
