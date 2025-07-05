@@ -92,7 +92,7 @@ const App = () => {
           });
         })
         .catch(error => {
-          console.error("Error adding person:", error);
+          console.log(error.response.data.error)
           setMessage({
             type: 'error',
             text: `Failed to add ${newName}. Please try again.`,
